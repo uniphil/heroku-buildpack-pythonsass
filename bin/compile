@@ -136,6 +136,19 @@ set -e
 
 mkdir -p $(dirname $PROFILE_PATH)
 
+# Install sass and comapss
+puts-step "lalala"
+
+if [ ! -d .heroku/python/bin/gems ]; then
+  bpwatch start install_sass
+
+    puts-step "Installing sass and compass"
+    gem install compass --install-dir /app/.heroku/python/bin
+
+  bpwatch stop install_sass
+fi
+
+
 set +e
 PYTHON_VERSION=$(cat runtime.txt)
 
@@ -234,7 +247,7 @@ bpwatch stop collectstatic
 #
 
 # Set context environment variables.
-set-env PATH '$HOME/.heroku/python/bin:$PATH'
+set-env PATH '$HOME/.heroku/python/bin:'$(echo /app/.heroku/python/bin/gems/*/bin | awk '{$1=$1}1' OFS=":")':$PATH'
 set-env PYTHONUNBUFFERED true
 set-env PYTHONHOME /app/.heroku/python
 set-default-env LIBRARY_PATH /app/.heroku/vendor/lib
